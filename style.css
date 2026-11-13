@@ -109,12 +109,12 @@ body {
   gap: 10px;
 }
 
-/* Compact Toolbar: 무조건 가로 1줄 배치 */
+/* Compact Toolbar: 무조건 가로 1줄 */
 .compact-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: nowrap; /* 절대 줄바꿈 금지 */
+  flex-wrap: nowrap;
   background: #f8fafc;
   padding: 5px 10px;
   border-radius: var(--radius-md);
@@ -161,7 +161,7 @@ body {
   box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px var(--btn-color);
 }
 
-/* 2. 펜 굵기: 실제 선 두께를 직관적으로 보여주는 스트로크 바 */
+/* 2. 펜 굵기 스트로크 바 */
 .stroke-options {
   display: flex;
   align-items: center;
@@ -207,7 +207,6 @@ body {
   background-color: var(--primary);
 }
 
-/* 직관적인 선 굵기 표현 */
 .stroke-sm { height: 2px; }
 .stroke-md { height: 4px; }
 .stroke-lg { height: 7px; }
@@ -350,13 +349,15 @@ body {
   gap: 8px;
 }
 
-/* 38px 아이콘 액션 버튼 */
-.icon-action-btn {
+/* 세로 스택형 액션 버튼 (아이콘 위 + 글자 아래) */
+.action-btn-stacked {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  min-width: 48px;
+  height: 44px;
+  padding: 3px 8px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   background: #ffffff;
@@ -364,24 +365,32 @@ body {
   cursor: pointer;
   transition: all 0.15s ease;
   user-select: none;
+  gap: 2px;
 }
 
-.icon-action-btn:hover:not(:disabled) {
+.action-btn-stacked:hover:not(:disabled) {
   background: #f1f5f9;
   border-color: #cbd5e1;
   color: var(--text-main);
 }
 
-.icon-action-btn:active:not(:disabled) {
+.action-btn-stacked:active:not(:disabled) {
   transform: translateY(1px);
 }
 
-.icon-action-btn:disabled {
+.action-btn-stacked:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
 
-/* 저장 아이콘 버튼 */
+.btn-text {
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* 저장 버튼 */
 .btn-save {
   background: #f8fafc;
   color: #1e293b;
@@ -393,7 +402,7 @@ body {
   color: #0f172a;
 }
 
-/* 카카오톡 아이콘 버튼 */
+/* 카톡공유 버튼 */
 .btn-kakao {
   background: var(--kakao-yellow);
   border-color: rgba(0, 0, 0, 0.08);
