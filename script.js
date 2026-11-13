@@ -1,7 +1,7 @@
 /**
  * 태블릿 친화적 전자 서명 패드 (500x200px 투명 PNG 생성기)
  * - 서명 크기 스마트 자동 감지(Auto-Crop)
- * - 카카오톡 등 앱으로 바로 보내기 (Web Share API 파일 공유)
+ * - 카카오톡 등 앱으로 '공유하기' (Web Share API) 및 '다운로드'
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -20,18 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const statusDot = document.getElementById('statusDot');
   const detectedSizeText = document.getElementById('detectedSizeText');
   
-  // 설정 모드 버튼
-  const actionShareBtn = document.getElementById('actionShareBtn');
-  const actionDownloadBtn = document.getElementById('actionDownloadBtn');
   const modeAutoBtn = document.getElementById('modeAutoBtn');
   const modeFullBtn = document.getElementById('modeFullBtn');
 
   // 액션 버튼
   const undoBtn = document.getElementById('undoBtn');
   const clearBtn = document.getElementById('clearBtn');
-  const directShareBtn = document.getElementById('directShareBtn');
-  const createFileBtn = document.getElementById('createFileBtn');
-  const createFileBtnText = document.getElementById('createFileBtnText');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const shareBtn = document.getElementById('shareBtn');
   
   // 미리보기 요소
   const previewCard = document.getElementById('previewCard');
@@ -52,8 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let points = [];
   let historyStack = [];
   
-  let defaultAction = 'share'; // 'share' (카톡 등 앱 공유) 또는 'download' (파일 다운로드)
-  let exportMode = 'auto';     // 'auto' (서명 크기 자동 맞춤) 또는 'full' (500x200 전체)
+  let exportMode = 'auto'; // 'auto' (서명 크기 자동 맞춤) 또는 'full' (500x200 전체)
   let latestBlob = null;
   let latestFileName = '';
 
@@ -316,12 +311,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ===============================
-     1. 카카오톡 등 앱으로 공유 (Web Share API)
+     1. 카카오톡 등 앱으로 공유하기 (Web Share API)
   =============================== */
   async function shareSignatureFile(blob, fileName) {
     const file = new File([blob], fileName, { type: 'image/png' });
 
-    // 기기 및 브라우저의 파일 공유 지원 여부 검사
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
@@ -332,12 +326,10 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('✅ 카카오톡 등 앱으로 공유를 완료했습니다.');
       } catch (err) {
         if (err.name !== 'AbortError') {
-          // 사용자가 취소한 것이 아니라 실패한 경우 다운로드로 대체
           downloadBlob(blob, fileName);
         }
       }
     } else {
-      // 데스크톱 브라우저 등 파일 공유를 미지원하는 환경
       showToast('ℹ️ 이 브라우저 환경에서는 앱 공유를 지원하지 않아 파일 다운로드로 저장합니다.');
       downloadBlob(blob, fileName);
     }
@@ -358,49 +350,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ===============================
-     메인 '파일만들기' 실행 분기
+     버튼 이벤트 리스너
   =============================== */
-  function handleCreateFile() {
-    generateSignatureBlob((blob, fileName) => {
-      if (defaultAction === 'share') {
-        shareSignatureFile(blob, fileName);
-      } else {
-        downloadBlob(blob, fileName);
-      }
-    });
-  }
-
-  // 상시 카카오톡/앱 바로 공유 버튼
-  directShareBtn.addEventListener('click', () => {
+  // 메인 '공유하기' 버튼
+  shareBtn.addEventListener('click', () => {
     generateSignatureBlob((blob, fileName) => {
       shareSignatureFile(blob, fileName);
     });
   });
 
-  // 메인 파일만들기 버튼
-  createFileBtn.addEventListener('click', handleCreateFile);
-
-  /* ===============================
-     설정 옵션 이벤트 리스너
-  =============================== */
-  // 동작 설정 (앱 공유 vs 다운로드)
-  actionShareBtn.addEventListener('click', () => {
-    defaultAction = 'share';
-    actionShareBtn.classList.add('active');
-    actionDownloadBtn.classList.remove('active');
-    createFileBtnText.textContent = '파일만들기 (카톡 공유)';
-    showToast('설정 완료: 파일만들기 클릭 시 카톡 등 앱으로 바로 보냅니다.');
+  // '다운로드' 버튼
+  downloadBtn.addEventListener('click', () => {
+    generateSignatureBlob((blob, fileName) => {
+      downloadBlob(blob, fileName);
+    });
   });
 
-  actionDownloadBtn.addEventListener('click', () => {
-    defaultAction = 'download';
-    actionDownloadBtn.classList.add('active');
-    actionShareBtn.classList.remove('active');
-    createFileBtnText.textContent = '파일만들기 (다운로드)';
-    showToast('설정 완료: 파일만들기 클릭 시 파일로 바로 다운로드합니다.');
-  });
-
-  // 저장 크기 방식 설정 (자동 맞춤 vs 전체)
+  // 저장 크기 방식 설정
   modeAutoBtn.addEventListener('click', () => {
     exportMode = 'auto';
     modeAutoBtn.classList.add('active');
@@ -413,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modeAutoBtn.classList.remove('active');
   });
 
-  // 미리보기 모달 내 전용 버튼
+  // 미리보기 모달 버튼
   previewShareBtn.addEventListener('click', () => {
     if (latestBlob && latestFileName) {
       shareSignatureFile(latestBlob, latestFileName);
@@ -479,7 +445,4 @@ document.addEventListener('DOMContentLoaded', () => {
       toast.classList.remove('show');
     }, 2800);
   }
-
-  // 초기 버튼 텍스트 설정
-  createFileBtnText.textContent = '파일만들기 (카톡 공유)';
 });
