@@ -14,7 +14,7 @@
     <header class="app-header">
       <div class="badge">Tablet & Touch Ready</div>
       <h1>전자 서명 패드</h1>
-      <p class="subtitle">서명 영역을 스마트하게 자동 감지하여 투명 배경 PNG로 저장합니다.</p>
+      <p class="subtitle">서명 영역을 자동 감지하여 투명 PNG로 카카오톡 전송 및 다운로드합니다.</p>
     </header>
 
     <main class="card-section">
@@ -71,18 +71,36 @@
         </div>
       </div>
 
-      <!-- 파일 저장 옵션: 서명 크기 자동 자르기 vs 고정 크기 -->
-      <div class="export-options">
-        <label class="group-label">저장 크기 방식</label>
-        <div class="segment-control">
-          <button type="button" class="segment-btn active" data-mode="auto" id="modeAutoBtn">
-            <span class="segment-title">✂️ 서명 크기 자동 맞춤 (추천)</span>
-            <span class="segment-desc">서명 획만 쏙 감지하여 불필요한 여백 없이 딱 맞게 저장</span>
-          </button>
-          <button type="button" class="segment-btn" data-mode="full" id="modeFullBtn">
-            <span class="segment-title">📐 서명란 전체 (500 &times; 200 px)</span>
-            <span class="segment-desc">서명란 크기 그대로 고정 해상도로 저장</span>
-          </button>
+      <!-- 옵션 설정 영역 (저장 크기 + 파일만들기 동작 설정) -->
+      <div class="settings-grid">
+        <!-- 설정 1: 파일만들기 버튼 클릭 시 동작 -->
+        <div class="setting-card">
+          <label class="group-label">파일만들기 시 동작 설정</label>
+          <div class="segment-control-compact">
+            <button type="button" class="action-mode-btn active" data-action="share" id="actionShareBtn">
+              <span class="mode-icon">💬</span>
+              <span class="mode-text"><strong>카톡 등 앱으로 보내기</strong><br><small>카카오톡, 메시지, 메일 즉시 공유</small></span>
+            </button>
+            <button type="button" class="action-mode-btn" data-action="download" id="actionDownloadBtn">
+              <span class="mode-icon">💾</span>
+              <span class="mode-text"><strong>기기에 파일 다운로드</strong><br><small>다운로드 폴더에 PNG 저장</small></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 설정 2: 저장 크기 방식 -->
+        <div class="setting-card">
+          <label class="group-label">저장 크기 방식</label>
+          <div class="segment-control-compact">
+            <button type="button" class="size-mode-btn active" data-mode="auto" id="modeAutoBtn">
+              <span class="mode-icon">✂️</span>
+              <span class="mode-text"><strong>서명 크기 자동 맞춤</strong><br><small>여백 없이 획만 꼭 맞게 저장</small></span>
+            </button>
+            <button type="button" class="size-mode-btn" data-mode="full" id="modeFullBtn">
+              <span class="mode-icon">📐</span>
+              <span class="mode-text"><strong>서명란 전체 규격</strong><br><small>500 &times; 200 px 고정</small></span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -100,9 +118,17 @@
         </div>
 
         <div class="right-actions">
+          <!-- 카카오톡/앱 바로 공유 전용 서브 버튼 -->
+          <button type="button" id="directShareBtn" class="btn btn-kakao" title="카카오톡 등 앱으로 바로 공유">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.557 1.708 4.8 4.27 6.054-.188.702-.68 2.541-.778 2.932-.123.493.18.486.379.354.157-.104 2.497-1.7 3.51-2.387.525.074 1.065.114 1.619.114 4.97 0 9-3.186 9-7.115C21 6.185 16.97 3 12 3z"/></svg>
+            카톡 공유
+          </button>
+          <!-- 메인 파일만들기 버튼 (설정된 모드에 따라 전송 또는 다운로드 실행) -->
           <button type="button" id="createFileBtn" class="btn btn-primary" title="투명 배경 PNG 파일 생성">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            파일만들기
+            <span id="createFileBtnIcon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </span>
+            <span id="createFileBtnText">파일만들기</span>
           </button>
         </div>
       </div>
@@ -122,6 +148,10 @@
           <img id="previewImage" alt="서명 미리보기" />
         </div>
         <p class="preview-desc">투명 격자 패턴 위에서 서명 주변의 배경이 완벽하게 투명한지 확인하실 수 있습니다.</p>
+        <div class="preview-actions">
+          <button type="button" id="previewShareBtn" class="btn btn-kakao btn-sm">💬 카카오톡으로 공유</button>
+          <button type="button" id="previewDownloadBtn" class="btn btn-secondary btn-sm">💾 파일로 다운로드</button>
+        </div>
       </div>
     </div>
 
@@ -129,7 +159,7 @@
     <div id="toast" class="toast"></div>
 
     <footer class="app-footer">
-      <p>💡 <strong>팁:</strong> 아이패드(애플 펜슬), 갤럭시 탭(S펜)의 펜 필압 감지 및 자동 서명 크롭(Auto-Crop)을 지원합니다.</p>
+      <p>💡 <strong>팁:</strong> 아이패드(애플 펜슬), 갤럭시 탭(S펜)에서 서명 후 카카오톡으로 나에게 보내기나 대화방 전송이 가능합니다.</p>
     </footer>
   </div>
 
