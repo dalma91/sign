@@ -292,15 +292,12 @@ body {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.canvas-wrapper.grid-bg {
-  background-color: #ffffff;
+/* 1. 격자 선 가이드 (모눈종이 격자눈금) */
+.canvas-wrapper.grid-lines {
   background-image: 
-    linear-gradient(45deg, #f1f5f9 25%, transparent 25%), 
-    linear-gradient(-45deg, #f1f5f9 25%, transparent 25%), 
-    linear-gradient(45deg, transparent 75%, #f1f5f9 75%), 
-    linear-gradient(-45deg, transparent 75%, #f1f5f9 75%);
-  background-size: 14px 14px;
-  background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+    linear-gradient(to right, rgba(203, 213, 225, 0.7) 1px, transparent 1px), 
+    linear-gradient(to bottom, rgba(203, 213, 225, 0.7) 1px, transparent 1px);
+  background-size: 25px 25px;
 }
 
 #signatureCanvas {
@@ -313,12 +310,13 @@ body {
   touch-action: none;
 }
 
+/* 2. 점선 가이드 (기준선) */
 .guideline {
   position: absolute;
   left: 20px;
   right: 20px;
   bottom: 40px;
-  border-bottom: 1px dashed #cbd5e1;
+  border-bottom: 1.5px dashed #94a3b8;
   pointer-events: none;
   z-index: 1;
   transition: opacity 0.2s ease;

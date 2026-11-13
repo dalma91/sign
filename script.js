@@ -363,15 +363,17 @@ document.addEventListener('DOMContentLoaded', () => {
     baseStrokeWidth = parseFloat(btn.getAttribute('data-size'));
   });
 
-  // 가이드라인 및 격자 토글
+  // 가이드 토글: 1. 격자 선(모눈) & 2. 점선(기준선)
   toggleGridBtn.addEventListener('click', () => {
-    const isActive = canvasWrapper.classList.toggle('grid-bg');
+    const isActive = canvasWrapper.classList.toggle('grid-lines');
     toggleGridBtn.classList.toggle('active', isActive);
+    showToast(isActive ? '격자 선이 켜졌습니다.' : '격자 선이 꺼졌습니다.');
   });
 
   toggleGuidelineBtn.addEventListener('click', () => {
     const isHidden = guideline.classList.toggle('hidden');
     toggleGuidelineBtn.classList.toggle('active', !isHidden);
+    showToast(!isHidden ? '기준 점선이 켜졌습니다.' : '기준 점선이 꺼졌습니다.');
   });
 
   // 키보드 단축키
