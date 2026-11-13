@@ -1,20 +1,21 @@
 :root {
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
-  --kakao-yellow: #FEE500;
-  --kakao-yellow-hover: #fada0a;
-  --kakao-icon: #191919;
+  --kakao-bg: #FEE500;
+  --kakao-hover: #fada0a;
+  --kakao-text: #191919;
   --bg-color: #f8fafc;
   --card-bg: #ffffff;
   --text-main: #0f172a;
   --text-muted: #64748b;
   --text-dim: #94a3b8;
   --border-color: #e2e8f0;
-  --radius-lg: 14px;
-  --radius-md: 9px;
+  --border-subtle: #f1f5f9;
+  --radius-lg: 16px;
+  --radius-md: 10px;
   --radius-sm: 6px;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 12px 32px -4px rgba(15, 23, 42, 0.06), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
 }
 
 * {
@@ -39,7 +40,7 @@ body {
 
 .app-container {
   width: 100%;
-  max-width: 532px;
+  max-width: 536px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -50,17 +51,24 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2px 4px;
+  padding: 0 4px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
-.brand-icon {
+.brand-icon-wrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #eff6ff;
   color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .app-header h1 {
@@ -74,10 +82,10 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 10px;
+  padding: 4px 10px;
   background-color: #ffffff;
   color: var(--text-muted);
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 600;
   border-radius: 9999px;
   border: 1px solid var(--border-color);
@@ -89,12 +97,12 @@ body {
   height: 6.5px;
   border-radius: 50%;
   background-color: var(--text-dim);
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .status-dot.active {
   background-color: #10b981;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 0 2.5px rgba(16, 185, 129, 0.25);
 }
 
 /* Main Card */
@@ -102,15 +110,15 @@ body {
   background: var(--card-bg);
   border-radius: var(--radius-lg);
   padding: 12px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* Compact Toolbar: 무조건 가로 1줄 */
-.compact-toolbar {
+/* 1줄 통합 상단 툴바 */
+.toolbar-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -123,7 +131,7 @@ body {
   width: 100%;
 }
 
-.toolbar-divider {
+.divider {
   width: 1px;
   height: 18px;
   background-color: var(--border-color);
@@ -131,7 +139,7 @@ body {
   margin: 0 4px;
 }
 
-/* 1. 펜 색상 칩 */
+/* 1. 색상 칩 */
 .color-options {
   display: flex;
   align-items: center;
@@ -157,8 +165,8 @@ body {
 }
 
 .color-btn.active {
-  transform: scale(1.2);
-  box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px var(--btn-color);
+  transform: scale(1.18);
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 3.5px var(--btn-color);
 }
 
 /* 2. 펜 굵기 스트로크 바 */
@@ -171,7 +179,7 @@ body {
 }
 
 .stroke-bar-btn {
-  width: 32px;
+  width: 34px;
   height: 28px;
   display: inline-flex;
   align-items: center;
@@ -209,9 +217,9 @@ body {
 
 .stroke-sm { height: 2px; }
 .stroke-md { height: 4px; }
-.stroke-lg { height: 7px; }
+.stroke-lg { height: 6.5px; }
 
-/* 3. 가이드 토글 아이콘 */
+/* 3. 가이드 토글 */
 .toggle-group {
   display: flex;
   align-items: center;
@@ -264,11 +272,12 @@ body {
   box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
   overflow: hidden;
   touch-action: none;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .canvas-wrapper.active-drawing {
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .canvas-wrapper.grid-bg {
@@ -340,7 +349,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 2px;
+  padding: 4px 2px 2px 2px;
 }
 
 .action-side {
@@ -349,69 +358,100 @@ body {
   gap: 8px;
 }
 
-/* 세로 스택형 액션 버튼 (아이콘 위 + 글자 아래) */
-.action-btn-stacked {
+/* 좌측: 글자 없는 순수 사각 아이콘 버튼 (되돌리기, 지우기) */
+.square-icon-btn {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.square-icon-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.square-icon-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.square-icon-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* 우측: 아이콘 아래 텍스트 중앙정렬 버튼 (저장, 카톡공유) */
+.action-card-btn {
+  min-width: 58px;
+  height: 50px;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 48px;
-  height: 44px;
-  padding: 3px 8px;
-  border-radius: var(--radius-md);
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 12px;
   border: 1px solid var(--border-color);
-  background: #ffffff;
-  color: #334155;
   cursor: pointer;
   transition: all 0.15s ease;
   user-select: none;
-  gap: 2px;
+  gap: 3px;
 }
 
-.action-btn-stacked:hover:not(:disabled) {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  color: var(--text-main);
-}
-
-.action-btn-stacked:active:not(:disabled) {
+.action-card-btn:active {
   transform: translateY(1px);
 }
 
-.action-btn-stacked:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.btn-text {
+.btn-caption {
   font-size: 0.68rem;
   font-weight: 600;
+  text-align: center;
   line-height: 1;
   letter-spacing: -0.02em;
 }
 
-/* 저장 버튼 */
+/* 저장 버튼 디자인 */
 .btn-save {
-  background: #f8fafc;
-  color: #1e293b;
+  background: #ffffff;
+  color: #334155;
   border-color: #cbd5e1;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-save:hover {
-  background: #e2e8f0;
+  background: #f8fafc;
   color: #0f172a;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
 }
 
-/* 카톡공유 버튼 */
+/* 카톡공유 버튼 디자인 */
 .btn-kakao {
-  background: var(--kakao-yellow);
+  background: var(--kakao-bg);
   border-color: rgba(0, 0, 0, 0.08);
-  color: var(--kakao-icon);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  color: var(--kakao-text);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .btn-kakao:hover {
-  background: var(--kakao-yellow-hover);
+  background: var(--kakao-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.btn-kakao .btn-caption {
+  font-weight: 700;
+  color: var(--kakao-text);
 }
 
 /* Preview Card */
@@ -420,7 +460,7 @@ body {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 8px 12px;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   animation: slideDown 0.2s ease;
 }
 
@@ -508,7 +548,7 @@ body {
   border-radius: 9999px;
   font-size: 0.8rem;
   font-weight: 500;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-card);
   pointer-events: none;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
   opacity: 0;
