@@ -1,7 +1,7 @@
 /**
- * 태블릿 친화적 전자 서명 패드 (500x200px 투명 PNG 생성기)
- * - 서명 크기 스마트 자동 감지(Auto-Crop)
- * - 카카오톡 등 앱으로 '공유하기' (Web Share API) 및 '다운로드'
+ * 미니멀 전자 서명 패드
+ * - 서명 영역 무조건 자동 크롭(Auto-Crop)
+ * - 카카오톡 아이콘(앱 공유) & 저장 아이콘(PNG 다운로드)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -9,50 +9,41 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('signatureCanvas');
   const canvasWrapper = document.getElementById('canvasWrapper');
   const ctx = canvas.getContext('2d');
-  
+
   const colorOptions = document.getElementById('colorOptions');
   const strokeOptions = document.getElementById('strokeOptions');
   const toggleGridBtn = document.getElementById('toggleGridBtn');
   const toggleGuidelineBtn = document.getElementById('toggleGuidelineBtn');
   const guideline = document.getElementById('guideline');
   const placeholderTip = document.getElementById('placeholderTip');
-  
+
   const statusDot = document.getElementById('statusDot');
   const detectedSizeText = document.getElementById('detectedSizeText');
-  
-  const modeAutoBtn = document.getElementById('modeAutoBtn');
-  const modeFullBtn = document.getElementById('modeFullBtn');
 
-  // 액션 버튼
+  // 하단 아이콘 버튼
   const undoBtn = document.getElementById('undoBtn');
   const clearBtn = document.getElementById('clearBtn');
-  const downloadBtn = document.getElementById('downloadBtn');
-  const shareBtn = document.getElementById('shareBtn');
-  
+  const saveBtn = document.getElementById('saveBtn');
+  const kakaoBtn = document.getElementById('kakaoBtn');
+
   // 미리보기 요소
   const previewCard = document.getElementById('previewCard');
   const previewImage = document.getElementById('previewImage');
   const previewBadge = document.getElementById('previewBadge');
   const closePreviewBtn = document.getElementById('closePreviewBtn');
-  const previewShareBtn = document.getElementById('previewShareBtn');
-  const previewDownloadBtn = document.getElementById('previewDownloadBtn');
   const toast = document.getElementById('toast');
 
-  // 상태 관리
+  // 상수 및 상태
   const CANVAS_WIDTH = 500;
   const CANVAS_HEIGHT = 200;
-  
+
   let currentColor = '#111827';
   let baseStrokeWidth = 3.5;
   let isDrawing = false;
   let points = [];
   let historyStack = [];
-  
-  let exportMode = 'auto'; // 'auto' (서명 크기 자동 맞춤) 또는 'full' (500x200 전체)
-  let latestBlob = null;
-  let latestFileName = '';
 
-  // 캔버스 초기 크기 설정
+  // 캔버스 초기화
   canvas.width = CANVAS_WIDTH;
   canvas.height = CANVAS_HEIGHT;
   ctx.lineCap = 'round';
@@ -61,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
   saveState();
 
   /* ===============================
-     이벤트 리스너: 터치 & 포인터
+     터치 / 펜 / 마우스 이벤트 (Pointer Events)
   =============================== */
   canvas.addEventListener('pointerdown', handlePointerDown);
   canvas.addEventListener('pointermove', handlePointerMove);
@@ -170,9 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ===============================
-     스마트 서명 영역 감지 (Auto-Crop Bounding Box)
+     무조건 서명 크기에 딱 맞게 크롭 (Auto-Crop)
   =============================== */
-  function getSignatureBounds(padding = 10) {
+  function getSignatureBounds(padding = 8) {
     const imgData = ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     const data = imgData.data;
 
@@ -184,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let y = 0; y < CANVAS_HEIGHT; y++) {
       for (let x = 0; x < CANVAS_WIDTH; x++) {
         const alphaIndex = (y * CANVAS_WIDTH + x) * 4 + 3;
-        if (data[alphaIndex] > 15) {
+        if (data[alphaIndex] > 12) {
           if (x < minX) minX = x;
           if (x > maxX) maxX = x;
           if (y < minY) minY = y;
@@ -222,15 +213,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateUI() {
     undoBtn.disabled = historyStack.length <= 1;
 
-    const bounds = getSignatureBounds(10);
+    const bounds = getSignatureBounds(8);
     if (bounds) {
       placeholderTip.classList.add('hidden');
       statusDot.classList.add('active');
-      detectedSizeText.innerHTML = `인식된 서명 크기: <strong>${bounds.width} &times; ${bounds.height} px</strong>`;
+      detectedSizeText.textContent = `${bounds.width} × ${bounds.height} px`;
     } else {
       placeholderTip.classList.remove('hidden');
       statusDot.classList.remove('active');
-      detectedSizeText.textContent = `서명 대기 중 (최대 ${CANVAS_WIDTH} × ${CANVAS_HEIGHT} px)`;
+      detectedSizeText.textContent = '서명 대기 중';
     }
   }
 
@@ -246,99 +237,91 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     historyStack = [];
     saveState();
+    previewCard.style.display = 'none';
     showToast('서명란을 초기화했습니다.');
   }
 
   /* ===============================
-     투명 PNG 생성 및 Blob 반환 유틸
+     무조건 서명 크기에 맞춰 크롭된 투명 PNG Blob 생성
   =============================== */
-  function generateSignatureBlob(callback) {
-    const bounds = getSignatureBounds(10);
+  function generateCroppedBlob(callback) {
+    const bounds = getSignatureBounds(8);
     if (!bounds) {
       showToast('⚠️ 서명을 먼저 입력해 주세요.');
       return;
     }
 
-    let targetCanvas;
-    let exportWidth;
-    let exportHeight;
-    let fileNameType;
+    // 서명 크기만큼만의 투명 캔버스 생성
+    const cropCanvas = document.createElement('canvas');
+    cropCanvas.width = bounds.width;
+    cropCanvas.height = bounds.height;
+    const cropCtx = cropCanvas.getContext('2d');
 
-    if (exportMode === 'auto') {
-      exportWidth = bounds.width;
-      exportHeight = bounds.height;
-      fileNameType = `crop_${exportWidth}x${exportHeight}`;
+    // 서명 획만 쏙 잘라내기
+    cropCtx.drawImage(
+      canvas,
+      bounds.x, bounds.y, bounds.width, bounds.height,
+      0, 0, bounds.width, bounds.height
+    );
 
-      targetCanvas = document.createElement('canvas');
-      targetCanvas.width = exportWidth;
-      targetCanvas.height = exportHeight;
-      const targetCtx = targetCanvas.getContext('2d');
-
-      targetCtx.drawImage(
-        canvas,
-        bounds.x, bounds.y, bounds.width, bounds.height,
-        0, 0, exportWidth, exportHeight
-      );
-    } else {
-      exportWidth = CANVAS_WIDTH;
-      exportHeight = CANVAS_HEIGHT;
-      fileNameType = `${CANVAS_WIDTH}x${CANVAS_HEIGHT}`;
-      targetCanvas = canvas;
-    }
-
-    targetCanvas.toBlob((blob) => {
+    cropCanvas.toBlob((blob) => {
       if (!blob) {
-        showToast('파일 생성에 실패했습니다.');
+        showToast('이미지 생성에 실패했습니다.');
         return;
       }
 
       const now = new Date();
       const pad = (n) => String(n).padStart(2, '0');
       const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
-      const fileName = `signature_${fileNameType}_${timestamp}.png`;
+      const fileName = `sign_${bounds.width}x${bounds.height}_${timestamp}.png`;
 
-      latestBlob = blob;
-      latestFileName = fileName;
-
-      // 미리보기 업데이트
+      // 상단 미리보기 업데이트
       const previewUrl = URL.createObjectURL(blob);
       previewImage.src = previewUrl;
-      previewBadge.textContent = `출력 크기: ${exportWidth} × ${exportHeight} px`;
+      previewBadge.textContent = `${bounds.width} × ${bounds.height} px`;
       previewCard.style.display = 'block';
 
-      callback(blob, fileName, exportWidth, exportHeight);
+      callback(blob, fileName, bounds.width, bounds.height);
     }, 'image/png');
   }
 
   /* ===============================
-     1. 카카오톡 등 앱으로 공유하기 (Web Share API)
+     1. 카카오톡 아이콘 클릭 -> 카카오톡 등 앱으로 보내기
   =============================== */
-  async function shareSignatureFile(blob, fileName) {
-    const file = new File([blob], fileName, { type: 'image/png' });
+  async function handleKakaoShare() {
+    generateCroppedBlob(async (blob, fileName) => {
+      const file = new File([blob], fileName, { type: 'image/png' });
 
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({
-          files: [file],
-          title: '전자 서명 (투명 PNG)',
-          text: '배경이 투명한 전자 서명 파일입니다.'
-        });
-        showToast('✅ 카카오톡 등 앱으로 공유를 완료했습니다.');
-      } catch (err) {
-        if (err.name !== 'AbortError') {
-          downloadBlob(blob, fileName);
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: '전자 서명 (투명 PNG)',
+            text: '배경이 투명한 전자 서명 파일입니다.'
+          });
+          showToast('✅ 카카오톡 등 앱으로 전송되었습니다.');
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            downloadFile(blob, fileName);
+          }
         }
+      } else {
+        showToast('ℹ️ 앱 공유가 지원되지 않아 파일로 저장합니다.');
+        downloadFile(blob, fileName);
       }
-    } else {
-      showToast('ℹ️ 이 브라우저 환경에서는 앱 공유를 지원하지 않아 파일 다운로드로 저장합니다.');
-      downloadBlob(blob, fileName);
-    }
+    });
   }
 
   /* ===============================
-     2. 로컬 파일 다운로드
+     2. 저장 아이콘 클릭 -> PNG 파일 다운로드
   =============================== */
-  function downloadBlob(blob, fileName) {
+  function handleFileSave() {
+    generateCroppedBlob((blob, fileName) => {
+      downloadFile(blob, fileName);
+    });
+  }
+
+  function downloadFile(blob, fileName) {
     const downloadUrl = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = downloadUrl;
@@ -346,57 +329,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast(`✅ "${fileName}" 파일이 다운로드되었습니다.`);
+    showToast(`💾 "${fileName}" 파일이 저장되었습니다.`);
   }
 
   /* ===============================
-     버튼 이벤트 리스너
+     이벤트 바인딩
   =============================== */
-  // 메인 '공유하기' 버튼
-  shareBtn.addEventListener('click', () => {
-    generateSignatureBlob((blob, fileName) => {
-      shareSignatureFile(blob, fileName);
-    });
-  });
+  kakaoBtn.addEventListener('click', handleKakaoShare);
+  saveBtn.addEventListener('click', handleFileSave);
 
-  // '다운로드' 버튼
-  downloadBtn.addEventListener('click', () => {
-    generateSignatureBlob((blob, fileName) => {
-      downloadBlob(blob, fileName);
-    });
-  });
-
-  // 저장 크기 방식 설정
-  modeAutoBtn.addEventListener('click', () => {
-    exportMode = 'auto';
-    modeAutoBtn.classList.add('active');
-    modeFullBtn.classList.remove('active');
-  });
-
-  modeFullBtn.addEventListener('click', () => {
-    exportMode = 'full';
-    modeFullBtn.classList.add('active');
-    modeAutoBtn.classList.remove('active');
-  });
-
-  // 미리보기 모달 버튼
-  previewShareBtn.addEventListener('click', () => {
-    if (latestBlob && latestFileName) {
-      shareSignatureFile(latestBlob, latestFileName);
-    }
-  });
-
-  previewDownloadBtn.addEventListener('click', () => {
-    if (latestBlob && latestFileName) {
-      downloadBlob(latestBlob, latestFileName);
-    }
-  });
+  undoBtn.addEventListener('click', undo);
+  clearBtn.addEventListener('click', clearCanvas);
 
   closePreviewBtn.addEventListener('click', () => {
     previewCard.style.display = 'none';
   });
 
-  // 펜 설정 및 가이드라인
+  // 펜 색상 선택
   colorOptions.addEventListener('click', (e) => {
     const btn = e.target.closest('.color-btn');
     if (!btn) return;
@@ -405,14 +354,16 @@ document.addEventListener('DOMContentLoaded', () => {
     currentColor = btn.getAttribute('data-color');
   });
 
+  // 펜 굵기 선택
   strokeOptions.addEventListener('click', (e) => {
-    const btn = e.target.closest('.stroke-btn');
+    const btn = e.target.closest('.stroke-dot-btn');
     if (!btn) return;
-    strokeOptions.querySelectorAll('.stroke-btn').forEach(b => b.classList.remove('active'));
+    strokeOptions.querySelectorAll('.stroke-dot-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     baseStrokeWidth = parseFloat(btn.getAttribute('data-size'));
   });
 
+  // 가이드라인 및 격자 토글
   toggleGridBtn.addEventListener('click', () => {
     const isActive = canvasWrapper.classList.toggle('grid-bg');
     toggleGridBtn.classList.toggle('active', isActive);
@@ -423,9 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleGuidelineBtn.classList.toggle('active', !isHidden);
   });
 
-  undoBtn.addEventListener('click', undo);
-  clearBtn.addEventListener('click', clearCanvas);
-
+  // 키보드 단축키
   window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
       e.preventDefault();
@@ -434,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ===============================
-     토스트 알림 함수
+     토스트 알림
   =============================== */
   let toastTimer = null;
   function showToast(message) {
@@ -443,6 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
     toast.classList.add('show');
     toastTimer = setTimeout(() => {
       toast.classList.remove('show');
-    }, 2800);
+    }, 2400);
   }
 });
