@@ -292,11 +292,12 @@ body {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* 1. 격자 선 가이드 (모눈종이 격자눈금) */
+/* 1. 격자 선 가이드: 연한 회색(#e5e7eb) 1px 실선 모눈종이 격자 */
 .canvas-wrapper.grid-lines {
+  background-color: #ffffff;
   background-image: 
-    linear-gradient(to right, rgba(203, 213, 225, 0.7) 1px, transparent 1px), 
-    linear-gradient(to bottom, rgba(203, 213, 225, 0.7) 1px, transparent 1px);
+    linear-gradient(to right, #e5e7eb 1px, transparent 1px), 
+    linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
   background-size: 25px 25px;
 }
 
