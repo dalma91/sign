@@ -14,11 +14,11 @@
     <header class="app-header">
       <div class="badge">Tablet & Touch Ready</div>
       <h1>전자 서명 패드</h1>
-      <p class="subtitle">500 &times; 200px 크기의 투명 배경 PNG 서명 파일을 제작합니다.</p>
+      <p class="subtitle">서명 영역을 스마트하게 자동 감지하여 투명 배경 PNG로 저장합니다.</p>
     </header>
 
     <main class="card-section">
-      <!-- 툴바: 펜 색상, 굵기, 배경 미리보기 모드 -->
+      <!-- 툴바: 펜 색상, 굵기, 배경 가이드 -->
       <div class="toolbar">
         <div class="tool-group">
           <label class="group-label">펜 색상</label>
@@ -52,7 +52,7 @@
         </div>
       </div>
 
-      <!-- 서명 캔버스 영역 (정확히 500 x 200 px) -->
+      <!-- 서명 캔버스 영역 (500 x 200 px) -->
       <div class="signature-stage">
         <div class="canvas-wrapper" id="canvasWrapper">
           <canvas id="signatureCanvas" width="500" height="200" aria-label="서명 입력 영역"></canvas>
@@ -61,7 +61,29 @@
             <span>여기에 터치펜이나 손가락으로 서명해 주세요</span>
           </div>
         </div>
-        <div class="canvas-dimensions">규격: 500 &times; 200 px | 출력 포맷: PNG (배경 투명)</div>
+        
+        <!-- 실시간 서명 크기 감지 상태 표시 바 -->
+        <div class="status-bar">
+          <div class="dimension-info">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="detectedSizeText">서명 대기 중 (최대 500 &times; 200 px)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 파일 저장 옵션: 서명 크기 자동 자르기 vs 고정 크기 -->
+      <div class="export-options">
+        <label class="group-label">저장 크기 방식</label>
+        <div class="segment-control">
+          <button type="button" class="segment-btn active" data-mode="auto" id="modeAutoBtn">
+            <span class="segment-title">✂️ 서명 크기 자동 맞춤 (추천)</span>
+            <span class="segment-desc">서명 획만 쏙 감지하여 불필요한 여백 없이 딱 맞게 저장</span>
+          </button>
+          <button type="button" class="segment-btn" data-mode="full" id="modeFullBtn">
+            <span class="segment-title">📐 서명란 전체 (500 &times; 200 px)</span>
+            <span class="segment-desc">서명란 크기 그대로 고정 해상도로 저장</span>
+          </button>
+        </div>
       </div>
 
       <!-- 하단 액션 버튼 -->
@@ -89,14 +111,17 @@
     <!-- 미리보기 모달 / 알림 영역 -->
     <div class="preview-card" id="previewCard" style="display: none;">
       <div class="preview-header">
-        <h3>방금 생성된 서명 파일 (투명도 검증)</h3>
+        <div>
+          <h3>방금 생성된 서명 파일</h3>
+          <span class="preview-badge" id="previewBadge">크기: 0 &times; 0 px</span>
+        </div>
         <button type="button" id="closePreviewBtn" class="close-btn">&times;</button>
       </div>
       <div class="preview-body">
         <div class="checkerboard-view">
           <img id="previewImage" alt="서명 미리보기" />
         </div>
-        <p class="preview-desc">체크무늬 배경을 통해 서명 획 외의 배경이 투명하게 처리되었음을 확인하실 수 있습니다.</p>
+        <p class="preview-desc">투명 격자 패턴 위에서 서명 주변의 배경이 완벽하게 투명한지 확인하실 수 있습니다.</p>
       </div>
     </div>
 
@@ -104,7 +129,7 @@
     <div id="toast" class="toast"></div>
 
     <footer class="app-footer">
-      <p>💡 <strong>팁:</strong> 아이패드(애플 펜슬), 갤럭시 탭(S펜) 등 태블릿 펜의 필압(압력) 감지를 기본 지원합니다.</p>
+      <p>💡 <strong>팁:</strong> 아이패드(애플 펜슬), 갤럭시 탭(S펜)의 펜 필압 감지 및 자동 서명 크롭(Auto-Crop)을 지원합니다.</p>
     </footer>
   </div>
 

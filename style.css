@@ -189,7 +189,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .canvas-wrapper {
@@ -201,7 +201,7 @@ body {
   border-radius: var(--radius-md);
   box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
   overflow: hidden;
-  touch-action: none; /* 태블릿/모바일 터치 스크롤 방지 핵심 */
+  touch-action: none;
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
@@ -276,9 +276,94 @@ body {
   opacity: 0;
 }
 
-.canvas-dimensions {
-  font-size: 0.78rem;
+/* 실시간 감지 상태 바 */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.dimension-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
   color: var(--text-muted);
+  background: #f8fafc;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #94a3b8;
+  transition: background-color 0.2s ease;
+}
+
+.status-dot.active {
+  background-color: #10b981; /* 녹색 */
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+/* 저장 크기 방식 세그먼트 컨트롤 */
+.export-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.segment-control {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.segment-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 4px;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.segment-btn:hover {
+  border-color: #cbd5e1;
+  background: #fdfdfd;
+}
+
+.segment-btn.active {
+  border-color: var(--primary);
+  background: #eff6ff;
+}
+
+.segment-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.segment-btn.active .segment-title {
+  color: var(--primary);
+}
+
+.segment-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.3;
 }
 
 /* Actions Section */
@@ -287,7 +372,7 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding-top: 8px;
+  padding-top: 4px;
 }
 
 .left-actions,
@@ -381,6 +466,18 @@ body {
 .preview-header h3 {
   font-size: 1rem;
   font-weight: 600;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.preview-badge {
+  display: inline-block;
+  font-size: 0.78rem;
+  padding: 2px 8px;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 9999px;
+  font-weight: 600;
 }
 
 .close-btn {
@@ -406,7 +503,8 @@ body {
 .checkerboard-view {
   width: 100%;
   max-width: 500px;
-  height: 140px;
+  min-height: 120px;
+  max-height: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -421,12 +519,14 @@ body {
   background-size: 16px 16px;
   background-position: 0 0, 0 8px, 8px -8px, -8px 0;
   overflow: hidden;
+  padding: 12px;
 }
 
 .checkerboard-view img {
   max-width: 100%;
-  max-height: 100%;
+  max-height: 180px;
   object-fit: contain;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .preview-desc {
@@ -483,9 +583,12 @@ body {
   }
 
   .canvas-wrapper {
-    /* 모바일 작은 화면 대응: 비율 유지하면서 필요시 스케일링되도록 */
     max-width: 100%;
     transform-origin: top center;
+  }
+
+  .segment-control {
+    grid-template-columns: 1fr;
   }
 
   .actions {
