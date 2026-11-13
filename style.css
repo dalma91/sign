@@ -117,34 +117,44 @@ body {
   gap: 10px;
 }
 
-/* 1줄 통합 상단 툴바 */
-.toolbar-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
+/* 1줄 통합 상단 툴바: 절대 줄바꿈 금지 */
+.toolbar-row,
+.compact-toolbar {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: nowrap !important; /* 3줄/2줄 줄바꿈 원천 차단 */
   background: #f8fafc;
   padding: 5px 10px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   gap: 4px;
   width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.toolbar-row::-webkit-scrollbar,
+.compact-toolbar::-webkit-scrollbar {
+  display: none;
 }
 
 .divider {
   width: 1px;
   height: 18px;
   background-color: var(--border-color);
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
   margin: 0 4px;
 }
 
-/* 1. 색상 칩 */
+/* 1. 색상 칩 (글자색) */
 .color-options {
-  display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  flex-shrink: 0;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  flex-shrink: 0 !important;
   gap: 6px;
 }
 
@@ -156,7 +166,7 @@ body {
   border: 2px solid transparent;
   cursor: pointer;
   outline: none;
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -169,26 +179,27 @@ body {
   box-shadow: 0 0 0 2px #ffffff, 0 0 0 3.5px var(--btn-color);
 }
 
-/* 2. 펜 굵기 스트로크 바 */
+/* 2. 펜 굵기 스트로크 바 (굵기) */
 .stroke-options {
-  display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  flex-shrink: 0;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  flex-shrink: 0 !important;
   gap: 4px;
 }
 
 .stroke-bar-btn {
   width: 34px;
   height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   border: 1px solid transparent;
   background: transparent;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
   transition: all 0.15s ease;
   padding: 0 4px;
 }
@@ -219,12 +230,13 @@ body {
 .stroke-md { height: 4px; }
 .stroke-lg { height: 6.5px; }
 
-/* 3. 가이드 토글 */
+/* 3. 가이드 토글 (가이드) */
 .toggle-group {
-  display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  flex-shrink: 0;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  flex-shrink: 0 !important;
   gap: 4px;
 }
 
