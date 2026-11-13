@@ -354,11 +354,11 @@ document.addEventListener('DOMContentLoaded', () => {
     currentColor = btn.getAttribute('data-color');
   });
 
-  // 펜 굵기 선택
+  // 펜 굵기 선택 (실제 선 두께 바)
   strokeOptions.addEventListener('click', (e) => {
-    const btn = e.target.closest('.stroke-dot-btn');
+    const btn = e.target.closest('.stroke-bar-btn');
     if (!btn) return;
-    strokeOptions.querySelectorAll('.stroke-dot-btn').forEach(b => b.classList.remove('active'));
+    strokeOptions.querySelectorAll('.stroke-bar-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     baseStrokeWidth = parseFloat(btn.getAttribute('data-size'));
   });

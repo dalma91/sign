@@ -109,39 +109,46 @@ body {
   gap: 10px;
 }
 
-/* Compact Toolbar */
+/* Compact Toolbar: 무조건 가로 1줄 배치 */
 .compact-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: nowrap; /* 절대 줄바꿈 금지 */
   background: #f8fafc;
-  padding: 4px 8px;
+  padding: 5px 10px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
+  gap: 4px;
+  width: 100%;
 }
 
 .toolbar-divider {
   width: 1px;
-  height: 16px;
+  height: 18px;
   background-color: var(--border-color);
+  flex-shrink: 0;
   margin: 0 4px;
 }
 
-/* Color Chips */
+/* 1. 펜 색상 칩 */
 .color-options {
   display: flex;
   align-items: center;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
   gap: 6px;
 }
 
 .color-btn {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background-color: var(--btn-color);
   border: 2px solid transparent;
   cursor: pointer;
   outline: none;
+  flex-shrink: 0;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -154,7 +161,66 @@ body {
   box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px var(--btn-color);
 }
 
-/* Toolbar Buttons */
+/* 2. 펜 굵기: 실제 선 두께를 직관적으로 보여주는 스트로크 바 */
+.stroke-options {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  gap: 4px;
+}
+
+.stroke-bar-btn {
+  width: 32px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  padding: 0 4px;
+}
+
+.stroke-bar-btn:hover {
+  background: #e2e8f0;
+}
+
+.stroke-bar-btn.active {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: var(--shadow-sm);
+}
+
+.stroke-line {
+  display: block;
+  width: 18px;
+  background-color: #475569;
+  border-radius: 9999px;
+  transition: background-color 0.15s ease;
+}
+
+.stroke-bar-btn.active .stroke-line {
+  background-color: var(--primary);
+}
+
+/* 직관적인 선 굵기 표현 */
+.stroke-sm { height: 2px; }
+.stroke-md { height: 4px; }
+.stroke-lg { height: 7px; }
+
+/* 3. 가이드 토글 아이콘 */
+.toggle-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  gap: 4px;
+}
+
 .tool-btn {
   width: 28px;
   height: 28px;
@@ -166,6 +232,7 @@ body {
   color: var(--text-muted);
   border-radius: var(--radius-sm);
   cursor: pointer;
+  flex-shrink: 0;
   transition: all 0.15s ease;
 }
 
@@ -180,24 +247,6 @@ body {
   border-color: #cbd5e1;
   box-shadow: var(--shadow-sm);
 }
-
-/* Stroke Dots */
-.stroke-options,
-.toggle-group {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.stroke-dot-btn .dot {
-  display: block;
-  border-radius: 50%;
-  background-color: currentColor;
-}
-
-.dot-sm { width: 3px; height: 3px; }
-.dot-md { width: 6px; height: 6px; }
-.dot-lg { width: 9px; height: 9px; }
 
 /* Canvas Stage */
 .canvas-stage {
@@ -301,7 +350,7 @@ body {
   gap: 8px;
 }
 
-/* 38px 정사각형 라운드 아이콘 액션 버튼 */
+/* 38px 아이콘 액션 버튼 */
 .icon-action-btn {
   display: inline-flex;
   align-items: center;

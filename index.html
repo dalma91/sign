@@ -27,7 +27,7 @@
     </header>
 
     <main class="card-section">
-      <!-- 컴팩트 상단 툴바: 펜 색상, 굵기, 가이드라인 토글 -->
+      <!-- 컴팩트 상단 툴바: 펜 색상, 굵기, 가이드라인 토글 (무조건 한 줄) -->
       <div class="compact-toolbar">
         <!-- 펜 색상 칩 -->
         <div class="color-options" id="colorOptions">
@@ -39,16 +39,16 @@
 
         <div class="toolbar-divider"></div>
 
-        <!-- 펜 굵기 도트 아이콘 -->
+        <!-- 펜 굵기: 실제 선 두께를 직관적으로 보여주는 스트로크 바 -->
         <div class="stroke-options" id="strokeOptions">
-          <button type="button" class="tool-btn stroke-dot-btn" data-size="2" title="얇은 선 (2px)">
-            <span class="dot dot-sm"></span>
+          <button type="button" class="stroke-bar-btn" data-size="2" title="얇은 선 (2px)">
+            <span class="stroke-line stroke-sm"></span>
           </button>
-          <button type="button" class="tool-btn stroke-dot-btn active" data-size="3.5" title="보통 선 (3.5px)">
-            <span class="dot dot-md"></span>
+          <button type="button" class="stroke-bar-btn active" data-size="3.5" title="보통 선 (3.5px)">
+            <span class="stroke-line stroke-md"></span>
           </button>
-          <button type="button" class="tool-btn stroke-dot-btn" data-size="5.5" title="굵은 선 (5.5px)">
-            <span class="dot dot-lg"></span>
+          <button type="button" class="stroke-bar-btn" data-size="6" title="굵은 선 (6px)">
+            <span class="stroke-line stroke-lg"></span>
           </button>
         </div>
 
